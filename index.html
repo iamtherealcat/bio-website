@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bio-Seite</title>
+  <link rel="stylesheet" type="text/css" href="styles.css"> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="icon" type="image/x-icon" href="./assets/favico/temp_image_9C5F8AEF-3D6C-4059-84C6-B30681948AFB.ico">
+</head>
+<body>
+  <div class="windows-background"></div>
+  <div class="cursor-dot"></div>
+
+  <div id="overlay">
+    <div id="enter-text">> Click to initialize system_</div>
+  </div>
+
+  <div id="audio-background">
+    <audio id="myAudio" loop>
+      <source src="assets/music/default.mp3" type="audio/mpeg">
+    </audio>
+    <button id="playButton" class="play-button">
+      <i class="fas fa-pause"></i>
+    </button>
+  </div>
+
+  <div class="container">
+    <div class="profile-card">
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="terminal-title">user@bio:~</div>
+      </div>
+      <div class="profile-content">
+        <div class="profile-header">
+          <img src="./assets/pfp/default.jpg" alt="Profilbild" class="profile-image">
+          <div class="typing-text">
+            <span class="prompt">$</span>
+            <span class="username"></span>
+          </div>
+          <div class="typing-text">
+            <span class="prompt">$</span>
+            <span class="bio"></span>
+          </div>
+        </div>
+        
+        <div class="social-links">
+          <a href="https://discordlookup.com/user/1283155495129055252" target="_blank" class="social-link" data-command="start https://discordlookup.com/user/1283155495129055252">
+            <i class="fab fa-discord"></i>
+            <span class="link-text">> start discord.lookup</span>
+          </a>
+          <a href="https://github.com/iamtherealcat" target="_blank" class="social-link" data-command="git clone https://github.com/iamtherealcat">
+            <i class="fab fa-github"></i>
+            <span class="link-text">> git clone @iamtherealcat</span>
+          </a>
+          <a href="#" target="_blank" class="social-link source-link" data-command="git clone [SOURCE_REPO]">
+            <i class="fas fa-code"></i>
+            <span class="link-text">> Sites Source</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="console">
+      <div class="console-header">
+        <div class="console-buttons">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="console-title">Command Prompt</div>
+      </div>
+      <div class="console-content">
+        <div class="console-output"></div>
+        <div class="console-input">
+          <span class="prompt">C:\Users\bio></span>
+          <span class="typing-text"></span>
+          <span class="cursor">_</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="credits">site made by iamtherealcat</div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const audio = document.getElementById('myAudio');
+      audio.volume = 0.8;
+      const playButton = document.getElementById('playButton');
+      const overlay = document.getElementById('overlay');
+      const cursorDot = document.querySelector(".cursor-dot");
+      const profileCard = document.querySelector(".profile-card");
+      const console = document.querySelector(".console");
+      const consoleOutput = document.querySelector(".console-output");
+      const typingText = document.querySelector(".typing-text");
+      const username = document.querySelector(".username");
+      const bio = document.querySelector(".bio");
+      
+      function typeText(element, text, speed = 50, callback) {
+        let i = 0;
+        element.textContent = '';
+        
+        function type() {
+          if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+          } else if (callback) {
+            callback();
+          }
+        }
+        
+        type();
+      }
+
+      overlay.addEventListener('click', function() {
+        audio.play();
+        overlay.style.display = 'none';
+        
+        const profileCard = document.querySelector('.profile-card');
+        profileCard.classList.add('visible');
+        
+        typeText(username, '!Cat', 100, () => {
+          setTimeout(() => {
+            typeText(bio, 'Some Experience in c++/c#/py/html most frontend, backend is decent', 100);
+          }, 500);
+        });
+      });
+      
+      window.addEventListener("mousemove", function(e) {
+        const posX = e.clientX;
+        const posY = e.clientY;
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+      });
+
+      document.querySelectorAll('.social-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const command = this.getAttribute('data-command');
+          const url = this.getAttribute('href');
+          
+          profileCard.style.transform = 'translateX(-100%)';
+          console.style.right = '20px';
+          
+          const consoleInput = document.querySelector('.console-input .typing-text');
+          const consoleOutput = document.querySelector('.console-output');
+          
+          consoleOutput.innerHTML = '';
+          consoleInput.textContent = '';
+          
+          let i = 0;
+          function typeCommand() {
+            if (i < command.length) {
+              consoleInput.textContent += command.charAt(i);
+              i++;
+              setTimeout(typeCommand, 50);
+            } else {
+              consoleOutput.innerHTML += `
+                <div class="command-line">
+                  <span class="prompt">C:\Users\bio></span>
+                  <span class="command">${command}</span>
+                </div>
+              `;
+              
+              setTimeout(() => {
+                let outputMessage = '';
+                if (command.includes('discord')) {
+                  outputMessage = `
+                    > Initializing Discord connection...
+                    > Fetching user data...
+                    > Connection established!
+                    > User profile loaded successfully
+                  `;
+                } else if (command.includes('git')) {
+                  outputMessage = `
+                    > Cloning repository...
+                    > Fetching commits...
+                    > Repository cloned successfully
+                    > Opening GitHub profile...
+                  `;
+                }
+                
+                consoleOutput.innerHTML += `
+                  <div class="command-output">
+                    ${outputMessage}
+                  </div>
+                `;
+                
+                setTimeout(() => {
+                  window.open(url, '_blank');
+                  
+                  setTimeout(() => {
+                    profileCard.style.transform = 'translateX(-50%)';
+                    console.style.right = '-600px';
+                    consoleOutput.innerHTML = '';
+                    consoleInput.textContent = '';
+                  }, 1000);
+                }, 1000);
+              }, 500);
+            }
+          }
+          
+          typeCommand();
+        });
+      });
+      
+      playButton.addEventListener('click', function() {
+        if (audio.paused) {
+          audio.play();
+          playButton.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+          audio.pause();
+          playButton.innerHTML = '<i class="fas fa-play"></i>';
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.shiftKey && (e.key === 'i' || e.key === 'I')) {
+          let wm = document.getElementById('hidden-watermark');
+          if (!wm) {
+            wm = document.createElement('div');
+            wm.id = 'hidden-watermark';
+            wm.textContent = 'made by iamtherealcat 🐾';
+            wm.style.display = 'block';
+            wm.style.position = 'fixed';
+            wm.style.bottom = '40px';
+            wm.style.left = '50%';
+            wm.style.transform = 'translateX(-50%)';
+            wm.style.background = 'rgba(30,30,30,0.95)';
+            wm.style.color = '#27c93f';
+            wm.style.padding = '10px 30px';
+            wm.style.borderRadius = '8px';
+            wm.style.fontFamily = "'Consolas',monospace";
+            wm.style.fontSize = '18px';
+            wm.style.zIndex = '99999';
+            wm.style.boxShadow = '0 2px 10px rgba(0,0,0,0.3)';
+            document.body.appendChild(wm);
+          } else {
+            wm.style.display = 'block';
+          }
+          clearTimeout(wm._timeout);
+          wm._timeout = setTimeout(() => {
+            wm.style.display = 'none';
+          }, 4000);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
